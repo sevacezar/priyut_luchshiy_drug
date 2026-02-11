@@ -1,0 +1,4 @@
+---
+alwaysApply: true
+---
+When you call some commands in CLI, use "uv" for backend
