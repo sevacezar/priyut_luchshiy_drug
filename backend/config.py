@@ -15,14 +15,39 @@ class Settings(BaseSettings):
     )
 
     # MongoDB configuration
-    mongodb_url: str = Field(
-        default="mongodb://localhost:27017",
-        description="MongoDB connection URL (e.g., mongodb://user:password@host:port/database)",
+    mongodb_host: str = Field(
+        default="localhost",
+        description="MongoDB host",
+    )
+    mongodb_port: int = Field(
+        default=27017,
+        description="MongoDB port",
+    )
+    mongodb_username: str = Field(
+        default="",
+        description="MongoDB username (empty for no auth)",
+    )
+    mongodb_password: str = Field(
+        default="",
+        description="MongoDB password (empty for no auth)",
     )
     mongodb_database: str = Field(
         default="priyut_luchshiy_drug",
         description="MongoDB database name",
     )
+
+    @property
+    def mongodb_url(self) -> str:
+        """Build MongoDB connection URL with authentication if provided."""
+        if self.mongodb_username and self.mongodb_password:
+            # With authentication
+            return (
+                f"mongodb://{self.mongodb_username}:{self.mongodb_password}"
+                f"@{self.mongodb_host}:{self.mongodb_port}/{self.mongodb_database}"
+                f"?authSource=admin"
+            )
+        # Without authentication
+        return f"mongodb://{self.mongodb_host}:{self.mongodb_port}/{self.mongodb_database}"
 
     # Application settings
     environment: str = Field(default="development")
@@ -33,10 +58,13 @@ class Settings(BaseSettings):
     cors_allow_origins: list[str] = Field(default=["*"])
     
     # Security
-    jwt_secret_key: str
-    jwt_algorithm: str = "HS256"
-    access_token_expire_seconds: int = 60 * 5  # 5 minutes
-    refresh_token_expire_seconds: int = 60 * 60 * 24 * 7  # 1 weak
+    jwt_secret_key: str = Field(
+        default="change-me-in-production",
+        description="JWT secret key for token signing (should be set in production)",
+    )
+    jwt_algorithm: str = Field(default="HS256")
+    access_token_expire_seconds: int = Field(default=60 * 5)  # 5 minutes
+    refresh_token_expire_seconds: int = Field(default=60 * 60 * 24 * 7)  # 1 week
 
     # S3 Storage configuration
     s3_endpoint_url: str | None = Field(
