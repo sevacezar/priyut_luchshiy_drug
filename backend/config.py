@@ -90,4 +90,20 @@ class Settings(BaseSettings):
         description="Base path for file uploads served by FastAPI (e.g., /uploads)",
     )
 
+    # Redis configuration
+    redis_host: str = Field(default="localhost", description="Redis host")
+    redis_port: int = Field(default=6379, description="Redis port")
+    redis_password: str = Field(default="", description="Redis password (empty for no auth)")
+    redis_db: int = Field(default=0, description="Redis database number")
+    redis_url: str = Field(
+        default="",
+        description="Redis connection URL (overrides host/port/password/db if set)",
+    )
+
+    # Session configuration
+    session_expire_seconds: int = Field(
+        default=60 * 60 * 24 * 7,  # 7 days
+        description="Session expiration time in seconds",
+    )
+
 settings = Settings()

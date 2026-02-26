@@ -44,9 +44,9 @@ def create_app() -> FastAPI:
     app.add_exception_handler(AuthorizationError, authorization_exception_handler)
 
     # Include routers
-    # from backend.api.routes import auth, pets
-    # app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-    # app.include_router(pets.router, prefix="/api/pets", tags=["pets"])
+    from backend.api.routes import auth_router
+
+    app.include_router(auth_router, prefix="/api")
 
     @app.get("/health")
     async def health_check():
@@ -54,4 +54,8 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     return app
+
+
+# Create app instance for uvicorn
+app = create_app()
 

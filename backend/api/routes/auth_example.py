@@ -3,7 +3,7 @@
 This file demonstrates how to use use cases and dependencies in routes.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, EmailStr
 
@@ -12,6 +12,7 @@ from backend.api.dependencies.container import (
     get_auth_login_use_case,
     get_auth_refresh_use_case,
 )
+from backend.api.dependencies.request_info import get_client_ip, get_user_agent
 from backend.application.repositories.pet_repository import PetFilters, PetRepository
 from backend.application.use_cases.auth_login import AuthLoginUseCase
 from backend.application.use_cases.auth_refresh import AuthRefreshUseCase
@@ -48,12 +49,16 @@ class RefreshResponse(BaseModel):
     """Refresh token response schema."""
 
     access_token: str
+    refresh_token: str
 
 
 @router.post("/login", response_model=LoginResponse)
 async def login(
     request: LoginRequest,
+    http_request: Request,
     login_use_case: AuthLoginUseCase = Depends(get_auth_login_use_case),
+    ip_address: str = Depends(get_client_ip),
+    user_agent: str = Depends(get_user_agent),
 ):
     """Login endpoint.
 
@@ -66,7 +71,9 @@ async def login(
     via the exception handler middleware.
     """
     try:
-        result = await login_use_case.execute(request.email, request.password)
+        result = await login_use_case.execute(
+            request.email, request.password, ip_address, user_agent
+        )
         return LoginResponse(
             access_token=result.access_token,
             refresh_token=result.refresh_token,
@@ -89,14 +96,20 @@ async def login(
 @router.post("/refresh", response_model=RefreshResponse)
 async def refresh(
     request: RefreshRequest,
+    http_request: Request,
     refresh_use_case: AuthRefreshUseCase = Depends(get_auth_refresh_use_case),
+    ip_address: str = Depends(get_client_ip),
+    user_agent: str = Depends(get_user_agent),
 ):
-    """Refresh access token endpoint.
+    """Refresh tokens endpoint.
 
-    Uses AuthRefreshUseCase to validate refresh token and issue new access token.
+    Uses AuthRefreshUseCase to validate refresh token and issue new access and refresh tokens.
+    Validates session matches IP address and User-Agent.
     """
-    result = await refresh_use_case.execute(request.refresh_token)
-    return RefreshResponse(access_token=result.access_token)
+    result = await refresh_use_case.execute(request.refresh_token, ip_address, user_agent)
+    return RefreshResponse(
+        access_token=result.access_token, refresh_token=result.refresh_token
+    )
 
 
 @router.get("/me")
@@ -138,4 +151,5 @@ async def admin_only_endpoint(
             "name": admin_user.name,
         },
     }
+
 

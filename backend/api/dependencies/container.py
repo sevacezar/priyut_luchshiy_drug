@@ -1,13 +1,17 @@
 """Dependency injection container for API dependencies."""
 
-from typing import Annotated
+from typing import Annotated, Optional
 
+import redis.asyncio as redis
 from fastapi import Depends
 
+from backend.application.repositories.session_repository import SessionRepository
 from backend.application.repositories.user_repository import UserRepository
 from backend.application.use_cases.auth_login import AuthLoginUseCase
 from backend.application.use_cases.auth_refresh import AuthRefreshUseCase
 from backend.application.use_cases.auth_verify import AuthVerifyUseCase
+from backend.infrastructure.database.redis_connection import init_redis
+from backend.infrastructure.repositories.session_repository_impl import RedisSessionRepository
 from backend.infrastructure.repositories.user_repository_impl import UserRepositoryImpl
 from backend.infrastructure.services.jwt_service import JWTService
 from backend.infrastructure.services.password_service import PasswordService
@@ -17,6 +21,26 @@ from backend.infrastructure.services.password_service import PasswordService
 _jwt_service = JWTService()
 _password_service = PasswordService()
 _user_repository: UserRepository = UserRepositoryImpl()
+_redis_client: Optional[redis.Redis] = None
+_session_repository: Optional[SessionRepository] = None
+
+
+async def get_redis_client() -> redis.Redis:
+    """Get Redis client instance (singleton)."""
+    global _redis_client
+    if _redis_client is None:
+        _redis_client = await init_redis()
+    return _redis_client
+
+
+async def get_session_repository(
+    redis_client: Annotated[redis.Redis, Depends(get_redis_client)],
+) -> SessionRepository:
+    """Get session repository instance."""
+    global _session_repository
+    if _session_repository is None:
+        _session_repository = RedisSessionRepository(redis_client)
+    return _session_repository
 
 
 def get_user_repository() -> UserRepository:
@@ -46,15 +70,19 @@ def get_auth_login_use_case(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
     password_service: Annotated[PasswordService, Depends(get_password_service)],
     jwt_service: Annotated[JWTService, Depends(get_jwt_service)],
+    session_repository: Annotated[SessionRepository, Depends(get_session_repository)],
 ) -> AuthLoginUseCase:
     """Get auth login use case instance."""
-    return AuthLoginUseCase(user_repository, password_service, jwt_service)
+    return AuthLoginUseCase(
+        user_repository, password_service, jwt_service, session_repository
+    )
 
 
 def get_auth_refresh_use_case(
     user_repository: Annotated[UserRepository, Depends(get_user_repository)],
     jwt_service: Annotated[JWTService, Depends(get_jwt_service)],
+    session_repository: Annotated[SessionRepository, Depends(get_session_repository)],
 ) -> AuthRefreshUseCase:
     """Get auth refresh use case instance."""
-    return AuthRefreshUseCase(user_repository, jwt_service)
+    return AuthRefreshUseCase(user_repository, jwt_service, session_repository)
 

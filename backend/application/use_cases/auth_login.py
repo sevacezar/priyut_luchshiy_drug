@@ -1,6 +1,11 @@
 """Use case for user login."""
 
+from datetime import datetime, timedelta, timezone
+
+from backend.application.repositories.session_repository import SessionRepository
 from backend.application.repositories.user_repository import UserRepository
+from backend.config import settings
+from backend.domain.entities.session import Session
 from backend.domain.entities.user import User
 from backend.domain.exceptions.auth_exceptions import InvalidCredentialsError
 from backend.infrastructure.services.jwt_service import JWTService
@@ -35,6 +40,7 @@ class AuthLoginUseCase:
         user_repository: UserRepository,
         password_service: PasswordService,
         jwt_service: JWTService,
+        session_repository: SessionRepository,
     ) -> None:
         """Initialize AuthLoginUseCase.
 
@@ -42,17 +48,23 @@ class AuthLoginUseCase:
             user_repository: User repository implementation
             password_service: Password service for verification
             jwt_service: JWT service for token creation
+            session_repository: Session repository implementation
         """
         self._user_repository = user_repository
         self._password_service = password_service
         self._jwt_service = jwt_service
+        self._session_repository = session_repository
 
-    async def execute(self, email: str, password: str) -> LoginResult:
+    async def execute(
+        self, email: str, password: str, ip_address: str, user_agent: str
+    ) -> LoginResult:
         """Execute the login use case.
 
         Args:
             email: User email address
             password: User password
+            ip_address: Client IP address
+            user_agent: Client User-Agent header
 
         Returns:
             LoginResult with tokens and user
@@ -73,8 +85,34 @@ class AuthLoginUseCase:
         if not self._password_service.verify_password(password, user.password_hash):
             raise InvalidCredentialsError("Invalid email or password")
 
-        # Create tokens
-        token_data = {"sub": user.id, "is_admin": user.is_admin}
+        # Get or create session
+        existing_session = await self._session_repository.get_by_user_ip_user_agent(
+            user.id, ip_address, user_agent
+        )
+
+        if existing_session:
+            # Update existing session
+            existing_session.expires_at = datetime.now(timezone.utc) + timedelta(
+                seconds=settings.session_expire_seconds
+            )
+            session = await self._session_repository.update(existing_session)
+        else:
+            # Create new session
+            session = Session(
+                user_id=user.id,
+                ip_address=ip_address,
+                user_agent=user_agent,
+                expires_at=datetime.now(timezone.utc)
+                + timedelta(seconds=settings.session_expire_seconds),
+            )
+            session = await self._session_repository.create(session)
+
+        # Create tokens with session_id
+        token_data = {
+            "sub": user.id,
+            "is_admin": user.is_admin,
+            "session_id": session.id,
+        }
         access_token = self._jwt_service.create_access_token(data=token_data)
         refresh_token = self._jwt_service.create_refresh_token(data=token_data)
 
