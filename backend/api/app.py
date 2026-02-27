@@ -84,9 +84,10 @@ def create_app() -> FastAPI:
     app.add_exception_handler(AuthorizationError, authorization_exception_handler)
 
     # Include routers
-    from backend.api.routes import auth_router
+    from backend.api.routes import auth_router, pets_router
 
     app.include_router(auth_router, prefix="/api")
+    app.include_router(pets_router, prefix="/api")
 
     @app.get("/health")
     async def health_check():

@@ -20,6 +20,7 @@ class PetFilters(BaseModel):
     is_vaccinated: Optional[bool] = None
     is_sterilized: Optional[bool] = None
     search_query: Optional[str] = None  # Search in name, appearance_text, etc.
+    order_by: Optional[str] = None  # e.g. "created_at", "-created_at", "name", "-name"
 
 
 class PetRepository(Protocol):

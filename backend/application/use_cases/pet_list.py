@@ -68,9 +68,7 @@ class PetListUseCase:
         if limit > 100:
             raise ValueError("limit cannot exceed 100")
 
-        pets = await self._pet_repository.get_list(
-            skip=skip, limit=limit, filters=filters
-        )
+        pets = await self._pet_repository.get_list(skip=skip, limit=limit, filters=filters)
         total_count = await self._pet_repository.get_count(filters=filters)
 
         return PetListResult(

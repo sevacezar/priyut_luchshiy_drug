@@ -100,6 +100,28 @@ class PetRepositoryImpl:
                 ]
 
         query = PetModel.find(query_conditions)
+
+        # Apply ordering if requested
+        if filters and filters.order_by:
+            order_expr = filters.order_by  # e.g. "created_at" or "-created_at"
+            order_field = order_expr[1:] if order_expr.startswith("-") else order_expr
+
+            # Basic allowlist of sortable fields to avoid arbitrary field injection
+            sortable_fields = {
+                "name",
+                "created_at",
+                "updated_at",
+                "birth_year",
+                "admission_date",
+                "status",
+                "animal_type",
+                "gender",
+            }
+            if order_field in sortable_fields:
+                # Beanie supports string-based sort expressions with +/- prefixes
+                # like .sort("-created_at", "+name")
+                query = query.sort(order_expr)
+
         models = await query.skip(skip).limit(limit).to_list()
         return [PetMapper.to_domain(model) for model in models]
 

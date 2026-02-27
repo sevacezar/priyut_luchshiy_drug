@@ -1,6 +1,6 @@
 """Authentication dependencies for FastAPI."""
 
-from typing import Annotated, Optional
+from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -19,9 +19,7 @@ security = HTTPBearer()
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    verify_use_case: Annotated[
-        AuthVerifyUseCase, Depends(get_auth_verify_use_case)
-    ] = Depends(),
+    verify_use_case: AuthVerifyUseCase = Depends(get_auth_verify_use_case),
 ) -> User:
     """FastAPI dependency to get current authenticated user.
 
@@ -69,9 +67,7 @@ async def get_optional_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(
         HTTPBearer(auto_error=False)
     ),
-    verify_use_case: Annotated[
-        AuthVerifyUseCase, Depends(get_auth_verify_use_case)
-    ] = Depends(),
+    verify_use_case: AuthVerifyUseCase = Depends(get_auth_verify_use_case),
 ) -> Optional[User]:
     """FastAPI dependency to get current user (optional, no error if missing).
 
@@ -97,7 +93,7 @@ async def get_optional_current_user(
 
 
 async def get_admin_user(
-    current_user: Annotated[User, Depends(get_current_user)],
+    current_user: User = Depends(get_current_user),
 ) -> User:
     """FastAPI dependency to get current admin user.
 
