@@ -112,17 +112,18 @@ class AuthRefreshUseCase:
             await self._session_repository.delete(session_id)
             raise TokenInvalidError("Session expired")
 
-        # Update session expiration
+        # Rotate session ID on every refresh to make refresh tokens single-use.
+        # Old refresh token contains the old session_id and will stop working after rotation.
         session.expires_at = datetime.now(timezone.utc) + timedelta(
             seconds=settings.session_expire_seconds
         )
-        updated_session = await self._session_repository.update(session)
+        rotated_session = await self._session_repository.rotate(session)
 
-        # Create new tokens with updated session_id
+        # Create new tokens with rotated session_id
         token_data = {
             "sub": user.id,
             "is_admin": user.is_admin,
-            "session_id": updated_session.id,
+            "session_id": rotated_session.id,
         }
         access_token = self._jwt_service.create_access_token(data=token_data)
         new_refresh_token = self._jwt_service.create_refresh_token(data=token_data)

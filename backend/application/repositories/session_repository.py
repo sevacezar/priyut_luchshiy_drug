@@ -1,5 +1,6 @@
 """Session repository interface (Protocol)."""
 
+from datetime import datetime
 from typing import Optional, Protocol
 
 from backend.domain.entities.session import Session
@@ -56,6 +57,28 @@ class SessionRepository(Protocol):
 
         Raises:
             ValueError: If session not found or update fails
+        """
+        ...
+
+    async def rotate(self, session: Session) -> Session:
+        """Rotate (replace) an existing session with a new session ID.
+
+        This is used to enforce **single-use refresh tokens**. The current refresh token
+        contains the existing `session_id`. During refresh we:
+        - validate the session
+        - create a new session record with a new ID (same user/IP/User-Agent)
+        - delete the old session record
+        - update the user/IP/User-Agent lookup to point to the new session ID
+
+        Args:
+            session: Existing session entity (must have `id`) with updated fields
+                (e.g., refreshed `expires_at`)
+
+        Returns:
+            Rotated session entity with a new ID set
+
+        Raises:
+            ValueError: If session not found or rotation fails
         """
         ...
 

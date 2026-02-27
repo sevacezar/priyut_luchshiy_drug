@@ -179,6 +179,71 @@ class RedisSessionRepository:
 
         return session
 
+    async def rotate(self, session: Session) -> Session:
+        """Rotate an existing session by issuing a new session ID and invalidating the old one.
+
+        This enforces single-use refresh tokens: after rotation, the old `session_id`
+        embedded in the previous refresh token no longer exists in Redis.
+
+        Args:
+            session: Existing session entity with `id` set. `expires_at` should already
+                be updated by the caller.
+
+        Returns:
+            Rotated session entity with a new ID.
+
+        Raises:
+            ValueError: If session not found or rotation fails.
+        """
+        if not session.id:
+            raise ValueError("Session ID is required for rotation")
+
+        # Ensure the old session exists
+        existing = await self.get_by_id(session.id)
+        if existing is None:
+            raise ValueError(f"Session with ID {session.id} not found")
+
+        old_session_id = session.id
+        new_session_id = str(uuid4())
+
+        # Keep original creation time, update updated_at
+        rotated_session = session.model_copy()
+        rotated_session.id = new_session_id
+        rotated_session.created_at = existing.created_at
+        rotated_session.updated_at = datetime.now(timezone.utc)
+
+        # Serialize rotated session data
+        session_data = rotated_session.model_dump(mode="json")
+        session_data["created_at"] = rotated_session.created_at.isoformat()
+        session_data["updated_at"] = rotated_session.updated_at.isoformat()
+        session_data["expires_at"] = rotated_session.expires_at.isoformat()
+
+        ttl = int((rotated_session.expires_at - datetime.now(timezone.utc)).total_seconds())
+        if ttl <= 0:
+            raise ValueError("Session expiration time must be in the future")
+
+        user_session_key = self._get_user_session_key(
+            rotated_session.user_id,
+            rotated_session.ip_address,
+            rotated_session.user_agent,
+        )
+
+        # Best-effort atomic rotation using a pipeline.
+        # This prevents normal sequential reuse of old refresh tokens.
+        async with self._redis.pipeline(transaction=True) as pipe:
+            await (
+                pipe.setex(self._get_key(new_session_id), ttl, json.dumps(session_data))
+                .setex(
+                    user_session_key,
+                    ttl,
+                    new_session_id.encode() if isinstance(new_session_id, str) else new_session_id,
+                )
+                .delete(self._get_key(old_session_id))
+                .execute()
+            )
+
+        return rotated_session
+
     async def delete(self, session_id: str) -> bool:
         """Delete a session by its ID.
 

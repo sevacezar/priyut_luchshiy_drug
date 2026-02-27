@@ -16,6 +16,9 @@ from backend.domain.exceptions.auth_exceptions import (
     TokenExpiredError,
     TokenInvalidError,
 )
+from backend.logger import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -93,8 +96,20 @@ async def login(
         HTTPException: 500 if internal error occurs
     """
     try:
+        logger.info(
+            "Login attempt",
+            email=request.email,
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+
         # Validate request
         if not request.email or not request.password:
+            logger.warning(
+                "Login attempt with missing credentials",
+                email=request.email,
+                ip_address=ip_address,
+            )
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email and password are required",
@@ -103,6 +118,14 @@ async def login(
         # Execute login use case
         result = await login_use_case.execute(
             request.email, request.password, ip_address, user_agent
+        )
+
+        logger.info(
+            "Login successful",
+            user_id=result.user.id,
+            email=result.user.email,
+            is_admin=result.user.is_admin,
+            ip_address=ip_address,
         )
 
         # Return response
@@ -120,6 +143,12 @@ async def login(
 
     except InvalidCredentialsError as e:
         # Invalid credentials - return 401
+        logger.warning(
+            "Login failed: invalid credentials",
+            email=request.email,
+            ip_address=ip_address,
+            error=str(e),
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e) or "Invalid email or password",
@@ -127,12 +156,25 @@ async def login(
         )
     except ValueError as e:
         # Validation errors - return 400
+        logger.warning(
+            "Login failed: validation error",
+            email=request.email,
+            ip_address=ip_address,
+            error=str(e),
+        )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
     except Exception as e:
         # Unexpected errors - return 500
+        logger.error(
+            "Login failed: unexpected error",
+            email=request.email,
+            ip_address=ip_address,
+            error=str(e),
+            exc_info=True,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred during login",
@@ -177,8 +219,18 @@ async def refresh(
         HTTPException: 500 if internal error occurs
     """
     try:
+        logger.info(
+            "Token refresh attempt",
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+
         # Validate request
         if not request.refresh_token:
+            logger.warning(
+                "Token refresh failed: missing refresh token",
+                ip_address=ip_address,
+            )
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Refresh token is required",
@@ -189,6 +241,12 @@ async def refresh(
             request.refresh_token, ip_address, user_agent
         )
 
+        logger.info(
+            "Token refresh successful",
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+
         # Return response
         return RefreshResponse(
             access_token=result.access_token,
@@ -197,6 +255,12 @@ async def refresh(
 
     except TokenExpiredError as e:
         # Token expired - return 401
+        logger.warning(
+            "Token refresh failed: token expired",
+            ip_address=ip_address,
+            user_agent=user_agent,
+            error=str(e),
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e) or "Token has expired",
@@ -204,6 +268,12 @@ async def refresh(
         )
     except TokenInvalidError as e:
         # Invalid token or session mismatch - return 401
+        logger.warning(
+            "Token refresh failed: invalid token or session mismatch",
+            ip_address=ip_address,
+            user_agent=user_agent,
+            error=str(e),
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=str(e) or "Invalid token or session mismatch",
@@ -211,12 +281,25 @@ async def refresh(
         )
     except ValueError as e:
         # Validation errors - return 400
+        logger.warning(
+            "Token refresh failed: validation error",
+            ip_address=ip_address,
+            user_agent=user_agent,
+            error=str(e),
+        )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
     except Exception as e:
         # Unexpected errors - return 500
+        logger.error(
+            "Token refresh failed: unexpected error",
+            ip_address=ip_address,
+            user_agent=user_agent,
+            error=str(e),
+            exc_info=True,
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred during token refresh",

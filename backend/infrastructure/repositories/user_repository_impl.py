@@ -26,7 +26,7 @@ class UserRepositoryImpl:
             ValueError: If email already exists or creation fails
         """
         # Check if user with this email already exists
-        existing_user = await UserModel.find_one(UserModel.email == user.email)
+        existing_user = await UserModel.find_one({"email": user.email})
         if existing_user:
             raise ValueError(f"User with email {user.email} already exists")
 
@@ -63,7 +63,7 @@ class UserRepositoryImpl:
         Returns:
             User entity if found, None otherwise
         """
-        model = await UserModel.find_one(UserModel.email == email)
+        model = await UserModel.find_one({"email": email})
         if model is None:
             return None
 
@@ -95,7 +95,7 @@ class UserRepositoryImpl:
 
         # Check if email is being changed and if new email already exists
         if user.email != existing_model.email:
-            email_exists = await UserModel.find_one(UserModel.email == user.email)
+            email_exists = await UserModel.find_one({"email": user.email})
             if email_exists:
                 raise ValueError(f"User with email {user.email} already exists")
 
