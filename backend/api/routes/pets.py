@@ -24,6 +24,7 @@ from backend.domain.entities.pet import Pet
 from backend.domain.entities.user import User
 from backend.domain.enums.animal_type import AnimalType
 from backend.domain.enums.gender import Gender
+from backend.domain.enums.pet_group import PetGroup
 from backend.domain.enums.pet_status import PetStatus
 
 
@@ -103,6 +104,12 @@ class PetBaseSchema(BaseModel):
         None, description="Additional conditions or requirements"
     )
 
+    # Groups (shelter categories; pet can have several)
+    groups: Optional[list[PetGroup]] = Field(
+        default_factory=list,
+        description="Pet groups (e.g. Старички, Крупные)",
+    )
+
     # Status
     status: Optional[PetStatus] = Field(
         default=PetStatus.AVAILABLE,
@@ -128,6 +135,9 @@ class PetUpdateRequest(PetBaseSchema):
     name: Optional[str] = Field(None, description="Pet name", min_length=1, max_length=255)
     animal_type: Optional[AnimalType] = Field(
         None, description="Type of animal (dog, cat)"
+    )
+    groups: Optional[list[PetGroup]] = Field(
+        None, description="Pet groups (omit to leave unchanged)",
     )
 
 
@@ -164,6 +174,9 @@ async def list_pets(
     is_sterilized: Optional[bool] = Query(
         None, description="Filter by sterilization status"
     ),
+    groups: Optional[list[PetGroup]] = Query(
+        None, description="Filter by groups (pet has at least one of these)"
+    ),
     search_query: Optional[str] = Query(
         None, description="Search text in name, appearance, character fields"
     ),
@@ -184,6 +197,7 @@ async def list_pets(
         is_healthy=is_healthy,
         is_vaccinated=is_vaccinated,
         is_sterilized=is_sterilized,
+        groups=groups,
         search_query=search_query,
         order_by=order_by,
     )

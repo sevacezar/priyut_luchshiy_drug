@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from backend.domain.entities.pet import Pet
 from backend.domain.enums.animal_type import AnimalType
 from backend.domain.enums.gender import Gender
+from backend.domain.enums.pet_group import PetGroup
 from backend.domain.enums.pet_status import PetStatus
 
 
@@ -16,6 +17,7 @@ class PetFilters(BaseModel):
     status: Optional[PetStatus] = None
     animal_type: Optional[AnimalType] = None
     gender: Optional[Gender] = None
+    groups: Optional[list[PetGroup]] = None
     is_healthy: Optional[bool] = None
     is_vaccinated: Optional[bool] = None
     is_sterilized: Optional[bool] = None

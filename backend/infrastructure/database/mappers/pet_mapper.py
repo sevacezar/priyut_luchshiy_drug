@@ -37,6 +37,7 @@ class PetMapper:
             capture_place=model.capture_place,
             capture_condition=model.capture_condition,
             additional_conditions=model.additional_conditions,
+            groups=model.groups,
             status=model.status,
             created_at=model.created_at,
             updated_at=model.updated_at,

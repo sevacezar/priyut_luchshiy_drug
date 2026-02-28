@@ -1,0 +1,525 @@
+<html lang="en" class="antialiased"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лучший друг | Pet Shelter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafafa;
+        }
+        
+        iconify-icon {
+            stroke-width: 1.5;
+        }
+
+        /* Hide scrollbar for cleaner look in horizontal lists */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Unusual Elastic Appearance Animation for Cards */
+        @keyframes elasticReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(80px) scale(0.85) rotate(-6deg);
+                filter: blur(10px);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-15px) scale(1.02) rotate(2deg);
+                filter: blur(0px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(0deg);
+                filter: blur(0px);
+            }
+        }
+
+        .animal-card {
+            opacity: 0;
+            animation: elasticReveal 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            will-change: transform, opacity, filter;
+        }
+
+        /* Staggered delays based on grid position */
+        .animal-card:nth-child(1) { animation-delay: 0.1s; }
+        .animal-card:nth-child(2) { animation-delay: 0.2s; }
+        .animal-card:nth-child(3) { animation-delay: 0.3s; }
+        .animal-card:nth-child(4) { animation-delay: 0.4s; }
+        .animal-card:nth-child(5) { animation-delay: 0.5s; }
+        .animal-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+        <div class="sm:px-6 lg:px-8 flex h-20 max-w-7xl mr-auto ml-auto pr-4 pl-4 items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer group">
+                <div class="bg-[#0C5A56] p-2 rounded-xl group-hover:bg-[#F4563C] transition-colors duration-300 flex items-center justify-center">
+                    <iconify-icon icon="solar:heart-angle-linear" class="text-[#F1E3C3] text-2xl"></iconify-icon>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-semibold tracking-tight text-[#0C5A56]">Лучший друг</span>
+                    <span class="text-sm text-gray-500 font-medium">Приют для животных</span>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#" class="text-base font-medium text-gray-600 hover:text-[#0C5A56] transition-colors">Pets</a>
+                <a href="#" class="text-base font-medium text-gray-600 hover:text-[#0C5A56] transition-colors">About Us</a>
+                <a href="#" class="text-base font-medium text-gray-600 hover:text-[#0C5A56] transition-colors">Volunteer</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="tel:+79199509109" class="hidden sm:flex items-center gap-2 text-base font-medium text-[#0C5A56] hover:text-[#F4563C] transition-colors">
+                    <iconify-icon icon="solar:phone-linear" class="text-xl"></iconify-icon>
+                    +7 (919) 950-91-09
+                </a>
+                <button class="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center">
+                    <iconify-icon icon="solar:hamburger-menu-linear" class="text-2xl"></iconify-icon>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-[#0C5A56] relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                    <pattern id="pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M0 40L40 0H20L0 20M40 40V20L20 40" fill="none" stroke="#F1E3C3" stroke-width="1"></path>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#pattern)"></rect>
+            </svg>
+        </div>
+        <div class="sm:px-6 lg:px-8 z-10 max-w-7xl mr-auto ml-auto pt-16 pr-4 pb-16 pl-4 relative">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-semibold tracking-tight text-[#F1E3C3] mb-6">Find your new best friend</h1>
+                <p class="text-lg text-[#F1E3C3]/80 mb-8 leading-relaxed max-w-xl">
+                    We currently have over 100 dogs and cats waiting for a loving home. Browse our residents and find the perfect match for your family.
+                </p>
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex gap-2 text-base font-medium text-[#F7C520] bg-[#F7C520]/20 border-[#F7C520]/30 border rounded-full pt-2 pr-4 pb-2 pl-4 backdrop-blur-sm gap-x-2 gap-y-2 items-center">
+                        <iconify-icon icon="solar:heart-linear" class="text-xl"></iconify-icon>
+                        112 Pets looking for home
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="flex-grow sm:px-6 lg:px-8 flex flex-col md:flex-row w-full max-w-7xl mr-auto ml-auto pt-12 pr-4 pb-12 pl-4 gap-x-10 gap-y-10">
+        
+        <!-- Sidebar Filters -->
+        <aside class="w-full md:w-64 shrink-0 space-y-10">
+            
+            <!-- Custom Dropdown (Sort) -->
+            <div>
+                <h3 class="text-lg font-semibold tracking-tight text-gray-900 mb-4">Sort by</h3>
+                <div class="relative group cursor-pointer" id="sort-dropdown">
+                    <div class="flex items-center justify-between w-full px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-gray-300 transition-colors shadow-sm">
+                        <span class="text-base font-medium text-gray-700" id="sort-selected">Newest arrivals</span>
+                        <iconify-icon icon="solar:alt-arrow-down-linear" class="text-xl text-gray-400 group-hover:text-gray-600 transition-colors"></iconify-icon>
+                    </div>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute z-20 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-2 group-hover:translate-y-0">
+                        <div class="py-2">
+                            <div class="px-4 py-2 hover:bg-gray-50 text-base font-medium text-[#0C5A56] bg-gray-50/50 cursor-pointer flex items-center justify-between">
+                                Newest arrivals
+                                <iconify-icon icon="solar:check-read-linear" class="text-base"></iconify-icon>
+                            </div>
+                            <div class="px-4 py-2 hover:bg-gray-50 text-base font-medium text-gray-600 cursor-pointer transition-colors">Oldest residents</div>
+                            <div class="px-4 py-2 hover:bg-gray-50 text-base font-medium text-gray-600 cursor-pointer transition-colors">Age: Young to Old</div>
+                            <div class="px-4 py-2 hover:bg-gray-50 text-base font-medium text-gray-600 cursor-pointer transition-colors">Age: Old to Young</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Category: Type -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold tracking-tight text-gray-900">Species</h3>
+                    <button class="text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors">Reset</button>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <input type="checkbox" class="peer sr-only" checked="">
+                            <div class="w-5 h-5 border border-gray-300 rounded peer-checked:bg-[#0C5A56] peer-checked:border-[#0C5A56] group-hover:border-gray-400 transition-colors"></div>
+                            <iconify-icon icon="solar:check-read-linear" class="absolute text-white opacity-0 peer-checked:opacity-100 text-sm transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-base text-gray-600 group-hover:text-gray-900 transition-colors flex-grow">Dogs</span>
+                        <span class="text-sm text-gray-400 bg-gray-100 px-2 py-0.5 rounded-md">68</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <input type="checkbox" class="peer sr-only" checked="">
+                            <div class="w-5 h-5 border border-gray-300 rounded peer-checked:bg-[#0C5A56] peer-checked:border-[#0C5A56] group-hover:border-gray-400 transition-colors"></div>
+                            <iconify-icon icon="solar:check-read-linear" class="absolute text-white opacity-0 peer-checked:opacity-100 text-sm transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-base text-gray-600 group-hover:text-gray-900 transition-colors flex-grow">Cats</span>
+                        <span class="text-sm text-gray-400 bg-gray-100 px-2 py-0.5 rounded-md">44</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filter Category: Age -->
+            <div class="">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold tracking-tight text-gray-900">Age Group</h3>
+                </div>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <input type="checkbox" class="peer sr-only">
+                            <div class="w-5 h-5 border border-gray-300 rounded peer-checked:bg-[#0C5A56] peer-checked:border-[#0C5A56] group-hover:border-gray-400 transition-colors"></div>
+                            <iconify-icon icon="solar:check-read-linear" class="absolute text-white opacity-0 peer-checked:opacity-100 text-sm transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-base text-gray-600 group-hover:text-gray-900 transition-colors">Baby (0-6 months)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <input type="checkbox" class="peer sr-only">
+                            <div class="w-5 h-5 border border-gray-300 rounded peer-checked:bg-[#0C5A56] peer-checked:border-[#0C5A56] group-hover:border-gray-400 transition-colors"></div>
+                            <iconify-icon icon="solar:check-read-linear" class="absolute text-white opacity-0 peer-checked:opacity-100 text-sm transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-base text-gray-600 group-hover:text-gray-900 transition-colors">Young (6mo - 2yrs)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <input type="checkbox" class="peer sr-only">
+                            <div class="w-5 h-5 border border-gray-300 rounded peer-checked:bg-[#0C5A56] peer-checked:border-[#0C5A56] group-hover:border-gray-400 transition-colors"></div>
+                            <iconify-icon icon="solar:check-read-linear" class="absolute text-white opacity-0 peer-checked:opacity-100 text-sm transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-base text-gray-600 group-hover:text-gray-900 transition-colors">Adult (2 - 7 yrs)</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-5 h-5 shrink-0">
+                            <input type="checkbox" class="peer sr-only">
+                            <div class="w-5 h-5 border border-gray-300 rounded peer-checked:bg-[#0C5A56] peer-checked:border-[#0C5A56] group-hover:border-gray-400 transition-colors"></div>
+                            <iconify-icon icon="solar:check-read-linear" class="absolute text-white opacity-0 peer-checked:opacity-100 text-sm transition-opacity"></iconify-icon>
+                        </div>
+                        <span class="text-base text-gray-600 group-hover:text-gray-900 transition-colors">Senior (7+ yrs)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Custom Toggle (Urgent) -->
+            <div class="bg-[#F7C520]/10 border border-[#F7C520]/30 rounded-xl p-4">
+                <label class="flex items-center justify-between cursor-pointer group">
+                    <div class="flex flex-col">
+                        <span class="text-base font-medium text-gray-900 flex items-center gap-2">
+                            <iconify-icon icon="solar:danger-circle-linear" class="text-base text-[#F4563C]"></iconify-icon>
+                            Urgent Cases
+                        </span>
+                        <span class="text-sm text-gray-500 mt-1">Pets needing immediate homes</span>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" class="peer sr-only">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F4563C] transition-colors"></div>
+                    </div>
+                </label>
+            </div>
+        </aside>
+
+        <!-- Grid Container -->
+        <div class="flex-grow">
+            <!-- Active Filters Bar -->
+            <div class="mb-6 flex flex-wrap items-center gap-2">
+                <span class="text-sm font-medium text-gray-500 mr-2">Filters:</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                    Dogs
+                    <button class="hover:text-gray-900 focus:outline-none flex items-center justify-center"><iconify-icon icon="solar:close-circle-linear" class="text-sm"></iconify-icon></button>
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                    Cats
+                    <button class="hover:text-gray-900 focus:outline-none flex items-center justify-center"><iconify-icon icon="solar:close-circle-linear" class="text-sm"></iconify-icon></button>
+                </span>
+                <button class="text-sm font-medium text-gray-400 hover:text-gray-600 ml-auto transition-colors">Clear all</button>
+            </div>
+
+            <!-- Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1 -->
+                <article class="animal-card group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Dog" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-[#F7C520] text-gray-900 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Puppy</span>
+                            <span class="bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Male</span>
+                        </div>
+                        <button class="absolute top-3 right-3 p-2 bg-white/50 hover:bg-white backdrop-blur-sm rounded-full text-gray-400 hover:text-[#F4563C] transition-all duration-200 flex items-center justify-center">
+                            <iconify-icon icon="solar:heart-linear" class="text-xl"></iconify-icon>
+                        </button>
+                    </div>
+                    <div class="flex flex-col flex-grow pt-5 pr-5 pb-5 pl-5">
+                        <div class="flex mb-2 items-start justify-between">
+                            <h2 class="text-2xl font-semibold tracking-tight text-gray-900 group-hover:text-[#0C5A56] transition-colors">Charlie</h2>
+                        </div>
+                        <div class="space-y-2 mb-6">
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:calendar-linear" class="text-base text-gray-400"></iconify-icon>
+                                4 Months old
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:info-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Beagle Mix
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:map-point-linear" class="text-base text-gray-400"></iconify-icon>
+                                Shelter A, Room 3
+                            </p>
+                        </div>
+                        <button class="mt-auto w-full py-3 px-4 bg-gray-50 border border-gray-100 text-gray-800 text-base font-medium rounded-xl group-hover:bg-[#0C5A56] group-hover:border-[#0C5A56] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                            Meet Charlie
+                            <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="animal-card group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Cat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-[#F4563C] text-white text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Urgent</span>
+                            <span class="bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Female</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold tracking-tight text-gray-900 mb-2 group-hover:text-[#0C5A56] transition-colors">Luna</h2>
+                        <div class="space-y-2 mb-6">
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:calendar-linear" class="text-base text-gray-400"></iconify-icon>
+                                3 Years old
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:info-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Domestic Shorthair
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:hand-heart-linear" class="text-base text-[#F4563C]"></iconify-icon>
+                                <span class="text-[#F4563C]">Special Diet</span>
+                            </p>
+                        </div>
+                        <button class="mt-auto w-full py-3 px-4 bg-gray-50 border border-gray-100 text-gray-800 text-base font-medium rounded-xl group-hover:bg-[#0C5A56] group-hover:border-[#0C5A56] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                            Meet Luna
+                            <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="animal-card group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Dog" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Male</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold tracking-tight text-gray-900 mb-2 group-hover:text-[#0C5A56] transition-colors">Max</h2>
+                        <div class="space-y-2 mb-6">
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:calendar-linear" class="text-base text-gray-400"></iconify-icon>
+                                5 Years old
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:info-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Golden Retriever
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:smile-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Good with kids
+                            </p>
+                        </div>
+                        <button class="mt-auto w-full py-3 px-4 bg-gray-50 border border-gray-100 text-gray-800 text-base font-medium rounded-xl group-hover:bg-[#0C5A56] group-hover:border-[#0C5A56] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                            Meet Max
+                            <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Card 4 -->
+                <article class="animal-card group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Cat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-[#F7C520] text-gray-900 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Kitten</span>
+                            <span class="bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Male</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold tracking-tight text-gray-900 mb-2 group-hover:text-[#0C5A56] transition-colors">Oliver</h2>
+                        <div class="space-y-2 mb-6">
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:calendar-linear" class="text-base text-gray-400"></iconify-icon>
+                                2 Months old
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:info-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Tabby
+                            </p>
+                        </div>
+                        <button class="mt-auto w-full py-3 px-4 bg-gray-50 border border-gray-100 text-gray-800 text-base font-medium rounded-xl group-hover:bg-[#0C5A56] group-hover:border-[#0C5A56] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                            Meet Oliver
+                            <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Card 5 -->
+                <article class="animal-card group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Dog" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-[#F4563C] text-white text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Urgent</span>
+                            <span class="bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Male</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold tracking-tight text-gray-900 mb-2 group-hover:text-[#0C5A56] transition-colors">Rocky</h2>
+                        <div class="space-y-2 mb-6">
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:calendar-linear" class="text-base text-gray-400"></iconify-icon>
+                                8 Years old (Senior)
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:info-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Mixed Breed
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:home-2-linear" class="text-base text-gray-400"></iconify-icon>
+                                Needs quiet home
+                            </p>
+                        </div>
+                        <button class="mt-auto w-full py-3 px-4 bg-gray-50 border border-gray-100 text-gray-800 text-base font-medium rounded-xl group-hover:bg-[#0C5A56] group-hover:border-[#0C5A56] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                            Meet Rocky
+                            <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Card 6 -->
+                <article class="animal-card group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1495360010541-f48722b34f7d?auto=format&amp;fit=crop&amp;q=80&amp;w=800" alt="Cat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                        <div class="absolute top-3 left-3 flex gap-2">
+                            <span class="bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium px-2.5 py-1 rounded-lg shadow-sm">Female</span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h2 class="text-2xl font-semibold tracking-tight text-gray-900 mb-2 group-hover:text-[#0C5A56] transition-colors">Bella</h2>
+                        <div class="space-y-2 mb-6">
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:calendar-linear" class="text-base text-gray-400"></iconify-icon>
+                                1.5 Years old
+                            </p>
+                            <p class="text-base text-gray-600 flex items-center gap-2">
+                                <iconify-icon icon="solar:info-circle-linear" class="text-base text-gray-400"></iconify-icon>
+                                Calico
+                            </p>
+                        </div>
+                        <button class="mt-auto w-full py-3 px-4 bg-gray-50 border border-gray-100 text-gray-800 text-base font-medium rounded-xl group-hover:bg-[#0C5A56] group-hover:border-[#0C5A56] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2">
+                            Meet Bella
+                            <iconify-icon icon="solar:arrow-right-linear" class="text-base"></iconify-icon>
+                        </button>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6">
+                <p class="text-sm text-gray-500">
+                    Showing <span class="font-medium text-gray-900">1</span> to <span class="font-medium text-gray-900">6</span> of <span class="font-medium text-gray-900">112</span> pets
+                </p>
+                <div class="flex items-center gap-2">
+                    <button class="p-2 border border-gray-200 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center" disabled="">
+                        <iconify-icon icon="solar:alt-arrow-left-linear" class="text-xl"></iconify-icon>
+                    </button>
+                    <button class="w-10 h-10 flex items-center justify-center border border-[#0C5A56] bg-[#0C5A56] text-white rounded-lg text-base font-medium">1</button>
+                    <button class="w-10 h-10 flex items-center justify-center border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-base font-medium transition-colors">2</button>
+                    <button class="w-10 h-10 flex items-center justify-center border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-base font-medium transition-colors hidden sm:flex">3</button>
+                    <span class="text-gray-400 px-1 hidden sm:block">...</span>
+                    <button class="w-10 h-10 flex items-center justify-center border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-base font-medium transition-colors hidden sm:flex">19</button>
+                    <button class="p-2 border border-gray-200 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                        <iconify-icon icon="solar:alt-arrow-right-linear" class="text-xl"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <iconify-icon icon="solar:heart-angle-linear" class="text-[#0C5A56] text-xl"></iconify-icon>
+                <span class="text-sm font-medium text-gray-900">Лучший друг © 2024</span>
+            </div>
+            <div class="text-sm text-gray-500">
+                Helping pets find homes.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple mock interaction for the custom sort dropdown to behave like a select visually
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.getElementById('sort-dropdown');
+            const selectedText = document.getElementById('sort-selected');
+            const options = dropdown.querySelectorAll('.absolute > div > div');
+
+            options.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    // Prevent closing immediately to show visual feedback
+                    e.stopPropagation(); 
+                    
+                    // Update text
+                    const text = option.textContent.trim();
+                    selectedText.textContent = text;
+                    
+                    // Reset styling on all
+                    options.forEach(opt => {
+                        opt.classList.remove('bg-gray-50/50', 'text-[#0C5A56]');
+                        opt.classList.add('text-gray-600');
+                        const icon = opt.querySelector('iconify-icon');
+                        if(icon) icon.remove();
+                    });
+
+                    // Add styling to selected
+                    option.classList.remove('text-gray-600');
+                    option.classList.add('bg-gray-50/50', 'text-[#0C5A56]');
+                    
+                    // Add check icon
+                    if(!option.querySelector('iconify-icon')) {
+                        const iconHtml = `<iconify-icon icon="solar:check-read-linear" class="text-base"></iconify-icon>`;
+                        option.innerHTML = text + iconHtml;
+                    }
+
+                    // Briefly hide dropdown
+                    const menu = dropdown.querySelector('.absolute');
+                    menu.style.display = 'none';
+                    setTimeout(() => menu.style.display = '', 100);
+                });
+            });
+        });
+    </script>
+
+</body></html>

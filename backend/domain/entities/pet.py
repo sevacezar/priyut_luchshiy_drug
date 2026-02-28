@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from backend.domain.enums.animal_type import AnimalType
 from backend.domain.enums.gender import Gender
+from backend.domain.enums.pet_group import PetGroup
 from backend.domain.enums.pet_status import PetStatus
 
 
@@ -80,6 +81,12 @@ class Pet(BaseModel):
     # Additional conditions
     additional_conditions: Optional[str] = Field(
         None, description="Additional conditions or requirements"
+    )
+
+    # Groups (shelter categories; a pet can have several)
+    groups: list[PetGroup] = Field(
+        default_factory=list,
+        description="Pet groups (e.g. Старички, Крупные)",
     )
 
     # Status

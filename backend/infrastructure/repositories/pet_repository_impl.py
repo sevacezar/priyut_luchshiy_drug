@@ -75,6 +75,8 @@ class PetRepositoryImpl:
                 query_conditions["animal_type"] = filters.animal_type
             if filters.gender:
                 query_conditions["gender"] = filters.gender
+            if filters.groups:
+                query_conditions["groups"] = {"$in": filters.groups}
             if filters.is_healthy is not None:
                 query_conditions["is_healthy"] = filters.is_healthy
             if filters.is_vaccinated is not None:
@@ -144,6 +146,8 @@ class PetRepositoryImpl:
                 query_conditions["animal_type"] = filters.animal_type
             if filters.gender:
                 query_conditions["gender"] = filters.gender
+            if filters.groups:
+                query_conditions["groups"] = {"$in": filters.groups}
             if filters.is_healthy is not None:
                 query_conditions["is_healthy"] = filters.is_healthy
             if filters.is_vaccinated is not None:
