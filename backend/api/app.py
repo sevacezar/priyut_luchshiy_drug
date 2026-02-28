@@ -3,7 +3,7 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.api.dependencies.container import get_redis_client
@@ -84,10 +84,14 @@ def create_app() -> FastAPI:
     app.add_exception_handler(AuthorizationError, authorization_exception_handler)
 
     # Include routers
-    from backend.api.routes import auth_router, pets_router
+    from backend.api.routes import auth_router, pets_router, uploads_router
 
     app.include_router(auth_router, prefix="/api")
     app.include_router(pets_router, prefix="/api")
+
+    v1_router = APIRouter(prefix="/v1")
+    v1_router.include_router(uploads_router)
+    app.include_router(v1_router, prefix="/api")
 
     @app.get("/health")
     async def health_check():

@@ -89,6 +89,18 @@ class Settings(BaseSettings):
         default="/uploads",
         description="Base path for file uploads served by FastAPI (e.g., /uploads)",
     )
+    uploads_key_prefix: str = Field(
+        default="uploads",
+        description="Prefix for object keys in S3/MinIO (e.g., uploads -> uploads/pets/xxx.png)",
+    )
+    uploads_max_file_size_bytes: int = Field(
+        default=5 * 1024 * 1024,
+        description="Max upload file size in bytes (default 5 MiB)",
+    )
+    uploads_allowed_content_types: list[str] = Field(
+        default=["image/jpeg", "image/png", "image/gif", "image/webp"],
+        description="Allowed MIME types for image uploads",
+    )
 
     # Redis configuration
     redis_host: str = Field(default="localhost", description="Redis host")
