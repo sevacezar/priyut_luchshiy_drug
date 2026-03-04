@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-200 mt-auto py-8">
+    <footer className="bg-white border-t border-gray-200 py-8" data-testid="footer">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Icon icon="solar:heart-angle-linear" className="text-primary text-xl" />

@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-      <div className="sm:px-6 lg:px-8 flex h-20 max-w-7xl mr-auto ml-auto pr-4 pl-4 items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 cursor-pointer group">
+      <div className="flex md:grid md:grid-cols-[16rem_1fr_auto] h-20 max-w-7xl mr-auto ml-auto items-center justify-between pr-4 pl-2 sm:pr-6 sm:pl-2 lg:pr-8 lg:pl-0">
+        <Link to="/" className="flex items-center gap-3 cursor-pointer group md:justify-start md:-ml-10 lg:-ml-16">
           <div className="bg-primary p-2 rounded-xl group-hover:bg-accent transition-colors duration-300 flex items-center justify-center">
             <Icon icon="solar:heart-angle-linear" className="text-cream text-2xl" />
           </div>
@@ -15,7 +15,7 @@ export function Header() {
           </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center justify-center gap-8">
           <Link to="/pets" className="text-base font-medium text-gray-600 hover:text-primary transition-colors">
             Питомцы
           </Link>
