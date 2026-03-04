@@ -16,12 +16,12 @@ export function Header() {
         </Link>
 
         <nav className="hidden md:flex items-center justify-center gap-8">
-          <Link to="/pets" className="text-base font-medium text-gray-600 hover:text-primary transition-colors">
+          <Link to="/" className="text-base font-medium text-gray-600 hover:text-primary transition-colors">
             Питомцы
           </Link>
-          <a href="#" className="text-base font-medium text-gray-600 hover:text-primary transition-colors">
+          <Link to="/about" className="text-base font-medium text-gray-600 hover:text-primary transition-colors">
             О нас
-          </a>
+          </Link>
           <a href="#" className="text-base font-medium text-gray-600 hover:text-primary transition-colors">
             Волонтёрам
           </a>
