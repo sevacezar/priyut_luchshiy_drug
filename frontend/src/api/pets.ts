@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/config";
-import type { PetListParams, PetListResponse } from "@/types/pet";
+import type { Pet, PetListParams, PetListResponse } from "@/types/pet";
 
 function buildQuery(params: PetListParams): string {
   const search = new URLSearchParams();
@@ -24,6 +24,15 @@ export async function fetchPetList(params: PetListParams = {}): Promise<PetListR
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Ошибка загрузки списка: ${res.status} ${text}`);
+  }
+  return res.json();
+}
+
+export async function fetchPetDetail(petId: string): Promise<Pet> {
+  const res = await fetch(`${API_BASE_URL}/api/pets/${petId}`);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Ошибка загрузки карточки питомца: ${res.status} ${text}`);
   }
   return res.json();
 }

@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { AboutPage } from "@/pages/AboutPage";
 import { PetsPage } from "@/pages/PetsPage";
+import { PetDetailPage } from "@/pages/PetDetailPage";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<PetsPage />} />
             <Route path="/pets" element={<PetsPage />} />
+            <Route path="/pets/:petId" element={<PetDetailPage />} />
             <Route path="/about" element={<AboutPage />} />
           </Routes>
         </div>
