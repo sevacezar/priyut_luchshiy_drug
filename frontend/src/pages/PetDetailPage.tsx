@@ -91,8 +91,25 @@ function formatDate(isoDate: string | null): string {
   });
 }
 
-function boolLabel(value: boolean, positive: string, negative: string): string {
-  return value ? positive : negative;
+function byGender(
+  gender: Pet["gender"],
+  male: string,
+  female: string,
+  unknown: string = male,
+): string {
+  if (gender === "female") return female;
+  if (gender === "male") return male;
+  return unknown;
+}
+
+function boolLabel(
+  value: boolean,
+  gender: Pet["gender"],
+  positive: { male: string; female: string; unknown?: string },
+  negative: { male: string; female: string; unknown?: string },
+): string {
+  const forms = value ? positive : negative;
+  return byGender(gender, forms.male, forms.female, forms.unknown ?? forms.male);
 }
 
 function fallbackByAnimalType(animalType: Pet["animal_type"]): string {
@@ -106,6 +123,28 @@ function StatBadge({ icon, label }: { icon: string; label: string }) {
     <div className="inline-flex items-center gap-2 rounded-full border border-[#E6DCC6] bg-white/80 px-3 py-1.5 text-sm text-gray-700">
       <Icon icon={icon} className="text-base text-primary" />
       {label}
+    </div>
+  );
+}
+
+function HealthChip({
+  icon,
+  label,
+  ok,
+}: {
+  icon: string;
+  label: string;
+  ok: boolean;
+}) {
+  const toneClass = ok
+    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+    : "border-amber-200 bg-amber-50 text-amber-800";
+  const iconClass = ok ? "text-emerald-600" : "text-amber-600";
+
+  return (
+    <div className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium ${toneClass}`}>
+      <Icon icon={icon} className={`text-base shrink-0 ${iconClass}`} />
+      <span>{label}</span>
     </div>
   );
 }
@@ -127,6 +166,9 @@ export function PetDetailPage() {
 
   const activeImage = images[activeImageIndex] ?? "";
   const showControls = images.length > 1;
+  const contactPhone = "+79199509109";
+  const vkGroupUrl = "https://vk.com/club23396463";
+  const canBecomeGuardian = pet?.groups.includes("Ищем опекунов") ?? false;
 
   const goPrevImage = () => {
     setActiveImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -185,13 +227,15 @@ export function PetDetailPage() {
         </Link>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="pet-detail-fade-up pet-detail-delay-1 rounded-3xl border border-[#E9DFC8] bg-white/70 p-3 shadow-[0_15px_35px_-28px_rgba(12,90,86,0.55)] backdrop-blur-sm">
+          <div className="pet-detail-fade-up pet-detail-delay-1 group rounded-3xl border border-[#E9DFC8] bg-white/70 p-3 shadow-[0_15px_35px_-28px_rgba(12,90,86,0.55)] backdrop-blur-sm">
             <div className="relative overflow-hidden rounded-2xl bg-gray-100">
-              <img
-                src={activeImage}
-                alt={pet.name}
-                className="pet-detail-image w-full aspect-[4/3] object-cover"
-              />
+              <div className="h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.03] origin-center">
+                <img
+                  src={activeImage}
+                  alt={pet.name}
+                  className="pet-detail-image w-full aspect-[4/3] object-cover"
+                />
+              </div>
               {showControls && (
                 <>
                   <button
@@ -212,7 +256,7 @@ export function PetDetailPage() {
                   </button>
                 </>
               )}
-              <span className="absolute left-3 top-3 rounded-full bg-white/85 px-3 py-1 text-xs font-semibold text-primary backdrop-blur-sm">
+              <span className="absolute left-3 top-3 rounded-full border border-[#E8B800] bg-[#F7C520] px-3 py-1 text-xs font-semibold text-[#0C5A56] shadow-[0_8px_18px_-12px_rgba(247,197,32,0.95)]">
                 {statusLabel(pet.status)}
               </span>
             </div>
@@ -248,10 +292,25 @@ export function PetDetailPage() {
             <div className="mb-5 flex flex-wrap gap-2">
               <StatBadge icon="solar:calendar-linear" label={ageLabel(pet.birth_year)} />
               <StatBadge icon="solar:user-rounded-linear" label={genderLabel(pet.gender)} />
-              <StatBadge
-                icon="solar:star-shine-linear"
-                label={pet.groups.length ? pet.groups.join(" • ") : "Без группы"}
-              />
+            </div>
+
+            <div className="mb-5">
+              <div className="flex flex-wrap gap-2">
+                {pet.groups.length ? (
+                  pet.groups.map((group) => (
+                    <span
+                      key={group}
+                      className="inline-flex items-center rounded-full border border-[#0C5A56]/25 bg-[#0C5A56]/12 px-3 py-1 text-xs font-semibold text-[#0C5A56]"
+                    >
+                      {group}
+                    </span>
+                  ))
+                ) : (
+                  <span className="inline-flex items-center rounded-full border border-dashed border-[#0C5A56]/30 bg-[#0C5A56]/8 px-3 py-1 text-xs text-[#0C5A56]/75">
+                    Без группы
+                  </span>
+                )}
+              </div>
             </div>
 
             <p className="text-sm leading-relaxed text-gray-700">
@@ -260,25 +319,104 @@ export function PetDetailPage() {
                 "Этот питомец ждет человека, который подарит ему заботу и дом."}
             </p>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
               <div className="rounded-2xl border border-[#E6DCC6] bg-white p-4">
                 <h2 className="mb-2 text-sm font-semibold text-gray-900">Здоровье</h2>
-                <ul className="space-y-1 text-sm text-gray-700">
-                  <li>{boolLabel(pet.is_healthy, "Здоров", "Нуждается в наблюдении")}</li>
-                  <li>{boolLabel(pet.is_vaccinated, "Вакцинирован", "Без вакцинации")}</li>
-                  <li>{boolLabel(pet.is_sterilized, "Стерилизован", "Не стерилизован")}</li>
-                  <li>{boolLabel(pet.is_parasite_treated, "Обработан от паразитов", "Требуется обработка")}</li>
-                </ul>
+                <div className="grid gap-2">
+                  <HealthChip
+                    icon={pet.is_healthy ? "solar:heart-linear" : "solar:medical-kit-linear"}
+                    ok={pet.is_healthy}
+                    label={boolLabel(
+                      pet.is_healthy,
+                      pet.gender,
+                      { male: "Здоров", female: "Здорова", unknown: "Состояние стабильное" },
+                      { male: "Нуждается в наблюдении", female: "Нуждается в наблюдении", unknown: "Нуждается в наблюдении" },
+                    )}
+                  />
+                  <HealthChip
+                    icon={pet.is_vaccinated ? "solar:syringe-linear" : "solar:danger-triangle-linear"}
+                    ok={pet.is_vaccinated}
+                    label={boolLabel(
+                      pet.is_vaccinated,
+                      pet.gender,
+                      { male: "Вакцинирован", female: "Вакцинирована", unknown: "Вакцинирован(а)" },
+                      { male: "Не вакцинирован", female: "Не вакцинирована", unknown: "Не вакцинирован(а)" },
+                    )}
+                  />
+                  <HealthChip
+                    icon={pet.is_sterilized ? "solar:shield-check-linear" : "solar:shield-warning-linear"}
+                    ok={pet.is_sterilized}
+                    label={boolLabel(
+                      pet.is_sterilized,
+                      pet.gender,
+                      { male: "Стерилизован", female: "Стерилизована", unknown: "Стерилизован(а)" },
+                      { male: "Не стерилизован", female: "Не стерилизована", unknown: "Не стерилизован(а)" },
+                    )}
+                  />
+                  <HealthChip
+                    icon={pet.is_parasite_treated ? "solar:shield-check-linear" : "solar:shield-warning-linear"}
+                    ok={pet.is_parasite_treated}
+                    label={boolLabel(
+                      pet.is_parasite_treated,
+                      pet.gender,
+                      { male: "Обработан от паразитов", female: "Обработана от паразитов", unknown: "Обработан(а) от паразитов" },
+                      { male: "Требуется обработка", female: "Требуется обработка", unknown: "Требуется обработка" },
+                    )}
+                  />
+                </div>
+                <div className="mt-3">
+                  <div className="flex items-start gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                    <Icon icon="solar:clipboard-text-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                    <span>
+                      <span className="font-semibold text-gray-900">Примечания:</span>{" "}
+                      {pet.health_notes ?? "Не указано"}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="rounded-2xl border border-[#E6DCC6] bg-white p-4">
                 <h2 className="mb-2 text-sm font-semibold text-gray-900">Поступление</h2>
-                <ul className="space-y-1 text-sm text-gray-700">
-                  <li>Дата: {formatDate(pet.admission_date)}</li>
-                  <li>Место: {pet.capture_place ?? "Не указано"}</li>
-                  <li>Состояние: {pet.capture_condition ?? "Не указано"}</li>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:calendar-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                    <span><span className="font-semibold text-gray-900">Дата:</span> {formatDate(pet.admission_date)}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:map-point-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                    <span><span className="font-semibold text-gray-900">Место:</span> {pet.capture_place ?? "Не указано"}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:heart-pulse-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                    <span><span className="font-semibold text-gray-900">Состояние:</span> {pet.capture_condition ?? "Не указано"}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Icon icon="solar:document-text-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                    <span><span className="font-semibold text-gray-900">Детали:</span> {pet.admission_text ?? "Не указано"}</span>
+                  </li>
                 </ul>
               </div>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <a
+                href={`tel:${contactPhone}`}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#E24F36] bg-accent px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_-16px_rgba(244,86,60,0.95)] transition-all hover:-translate-y-0.5 hover:bg-[#E24F36]"
+              >
+                <Icon icon="solar:phone-calling-linear" className="text-base" />
+                Хочу познакомиться
+              </a>
+              {canBecomeGuardian && (
+                <a
+                  href={vkGroupUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary transition-all hover:-translate-y-0.5 hover:bg-primary/10"
+                >
+                  <Icon icon="solar:heart-hand-linear" className="text-base" />
+                  Стать опекуном
+                </a>
+              )}
             </div>
           </article>
         </div>
@@ -289,11 +427,28 @@ export function PetDetailPage() {
             <p className="text-sm leading-relaxed text-gray-700">
               {pet.appearance_text ?? "Подробное описание внешности пока не добавлено."}
             </p>
-            <div className="mt-4 grid gap-2 text-sm text-gray-600 sm:grid-cols-2">
-              <div>Окрас: {pet.coat_color ?? "Не указано"}</div>
-              <div>Тип шерсти: {pet.coat_type ?? "Не указано"}</div>
-              <div>Вес: {pet.adult_weight ?? "Не указано"}</div>
-              <div>Рост: {pet.adult_height ?? "Не указано"}</div>
+            <div className="mt-4 grid gap-4 text-sm text-gray-700 sm:grid-cols-2">
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <Icon icon="solar:ruler-angular-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                  <span><span className="font-semibold text-gray-900">Рост:</span> {pet.adult_height ?? "Не указано"}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Icon icon="solar:scale-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                  <span><span className="font-semibold text-gray-900">Вес:</span> {pet.adult_weight ?? "Не указано"}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-start gap-2">
+                  <Icon icon="solar:pallete-2-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                  <span><span className="font-semibold text-gray-900">Окрас:</span> {pet.coat_color ?? "Не указано"}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Icon icon="solar:leaf-linear" className="mt-0.5 shrink-0 text-base text-primary" />
+                  <span><span className="font-semibold text-gray-900">Тип шерсти:</span> {pet.coat_type ?? "Не указано"}</span>
+                </div>
+              </div>
             </div>
           </article>
 
@@ -302,16 +457,6 @@ export function PetDetailPage() {
             <p className="text-sm leading-relaxed text-gray-700">
               {pet.additional_conditions ?? "Особых условий пока не указано."}
             </p>
-            {pet.health_notes && (
-              <p className="mt-4 rounded-2xl bg-[#F8F5EC] p-3 text-sm text-gray-700">
-                <span className="font-semibold">Примечания по здоровью:</span> {pet.health_notes}
-              </p>
-            )}
-            {pet.admission_text && (
-              <p className="mt-4 rounded-2xl bg-[#F2F8F7] p-3 text-sm text-gray-700">
-                <span className="font-semibold">История поступления:</span> {pet.admission_text}
-              </p>
-            )}
           </article>
         </div>
       </div>
