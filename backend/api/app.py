@@ -84,10 +84,11 @@ def create_app() -> FastAPI:
     app.add_exception_handler(AuthorizationError, authorization_exception_handler)
 
     # Include routers
-    from backend.api.routes import auth_router, pets_router, uploads_router
+    from backend.api.routes import auth_router, pets_router, uploads_router, users_router
 
     app.include_router(auth_router, prefix="/api")
     app.include_router(pets_router, prefix="/api")
+    app.include_router(users_router, prefix="/api")
 
     v1_router = APIRouter(prefix="/v1")
     v1_router.include_router(uploads_router)
@@ -103,4 +104,3 @@ def create_app() -> FastAPI:
 
 # Create app instance for uvicorn
 app = create_app()
-

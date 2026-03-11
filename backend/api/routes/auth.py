@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, EmailStr, Field
 
+from backend.api.dependencies.auth import get_current_user
 from backend.api.dependencies.container import (
     get_auth_login_use_case,
     get_auth_refresh_use_case,
@@ -56,6 +57,16 @@ class ErrorResponse(BaseModel):
     """Error response schema."""
 
     detail: str = Field(..., description="Error message")
+
+
+class CurrentUserResponse(BaseModel):
+    """Current authenticated user response schema."""
+
+    id: str | None
+    email: EmailStr
+    name: str
+    is_admin: bool
+    is_active: bool
 
 
 @router.post(
@@ -305,3 +316,18 @@ async def refresh(
             detail="An unexpected error occurred during token refresh",
         ) from e
 
+
+@router.get(
+    "/me",
+    response_model=CurrentUserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def me(current_user: User = Depends(get_current_user)) -> CurrentUserResponse:
+    """Get current authenticated user."""
+    return CurrentUserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        name=current_user.name,
+        is_admin=current_user.is_admin,
+        is_active=current_user.is_active,
+    )

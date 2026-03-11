@@ -2,7 +2,18 @@
 
 from typing import Optional, Protocol
 
+from pydantic import BaseModel
+
 from backend.domain.entities.user import User
+
+
+class UserFilters(BaseModel):
+    """Filters for user queries."""
+
+    is_admin: Optional[bool] = None
+    is_active: Optional[bool] = None
+    search_query: Optional[str] = None
+    order_by: Optional[str] = None
 
 
 class UserRepository(Protocol):
@@ -58,3 +69,19 @@ class UserRepository(Protocol):
         """
         ...
 
+    async def get_list(
+        self,
+        skip: int = 0,
+        limit: int = 10,
+        filters: Optional[UserFilters] = None,
+    ) -> list[User]:
+        """Get a list of users with pagination and filters."""
+        ...
+
+    async def get_count(self, filters: Optional[UserFilters] = None) -> int:
+        """Get total count of users matching filters."""
+        ...
+
+    async def delete(self, user_id: str) -> bool:
+        """Delete a user by ID."""
+        ...

@@ -4,7 +4,7 @@ from typing import Optional
 
 from beanie import PydanticObjectId
 
-from backend.application.repositories.user_repository import UserRepository
+from backend.application.repositories.user_repository import UserFilters, UserRepository
 from backend.domain.entities.user import User
 from backend.infrastructure.database.mappers.user_mapper import UserMapper
 from backend.infrastructure.database.models.user_model import UserModel
@@ -116,9 +116,71 @@ class UserRepositoryImpl:
 
         return UserMapper.to_domain(updated_model)
 
+    async def get_list(
+        self,
+        skip: int = 0,
+        limit: int = 10,
+        filters: Optional[UserFilters] = None,
+    ) -> list[User]:
+        """Get a list of users with pagination and filters."""
+        query_conditions: dict = {}
+
+        if filters:
+            if filters.is_admin is not None:
+                query_conditions["is_admin"] = filters.is_admin
+            if filters.is_active is not None:
+                query_conditions["is_active"] = filters.is_active
+            if filters.search_query:
+                query_conditions["$or"] = [
+                    {"name": {"$regex": filters.search_query, "$options": "i"}},
+                    {"email": {"$regex": filters.search_query, "$options": "i"}},
+                ]
+
+        query = UserModel.find(query_conditions)
+
+        if filters and filters.order_by:
+            order_expr = filters.order_by
+            order_field = order_expr[1:] if order_expr.startswith("-") else order_expr
+            sortable_fields = {"email", "name", "created_at", "updated_at", "is_admin", "is_active"}
+            if order_field in sortable_fields:
+                query = query.sort(order_expr)
+
+        models = await query.skip(skip).limit(limit).to_list()
+        return [UserMapper.to_domain(model) for model in models]
+
+    async def get_count(self, filters: Optional[UserFilters] = None) -> int:
+        """Get total count of users matching filters."""
+        query_conditions: dict = {}
+
+        if filters:
+            if filters.is_admin is not None:
+                query_conditions["is_admin"] = filters.is_admin
+            if filters.is_active is not None:
+                query_conditions["is_active"] = filters.is_active
+            if filters.search_query:
+                query_conditions["$or"] = [
+                    {"name": {"$regex": filters.search_query, "$options": "i"}},
+                    {"email": {"$regex": filters.search_query, "$options": "i"}},
+                ]
+
+        return await UserModel.find(query_conditions).count()
+
+    async def delete(self, user_id: str) -> bool:
+        """Delete a user by ID."""
+        try:
+            object_id = PydanticObjectId(user_id)
+        except Exception:
+            return False
+
+        model = await UserModel.get(object_id)
+        if model is None:
+            return False
+
+        await model.delete()
+        return True
+
 
 # Type check: ensure implementation matches protocol
 def _check_implementation() -> None:
     """Type check helper to ensure UserRepositoryImpl implements UserRepository."""
     _: UserRepository = UserRepositoryImpl()
-
